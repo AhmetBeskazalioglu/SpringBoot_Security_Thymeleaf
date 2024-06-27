@@ -1,0 +1,28 @@
+1.
+    a. Eğer  Data REST API  kullanacaksanız,  Data REST API ile ilgili dependency ekleyin.
+            <dependency>
+     			<groupId>org.springframework.boot</groupId>
+     			<artifactId>spring-boot-starter-data-rest</artifactId>
+     		</dependency>
+
+    b. application.properties'e aşağıdaki property'yi ekleyin.
+            # /magic-api ve 20 değerleri örnektir. Değiştirilebilir.
+            spring.data.rest.base-path=/<magic-api>
+            spring.data.rest.default-page-size=<20>
+
+    c. Repository interface'i oluşturun.
+
+            # b maddesindeki property'yi eklediğinizde, /magic-api/employees adresine erişim sağlayabilirsiniz.
+             public interface EmployeeRepository extends JpaRepository<<Employee>, Long> {
+                        }
+             localhost:8080/magic-api/employees şeklinde erişim sağlanır.
+
+            # Neden /.../employees şeklinde erişim sağlıyoruz?
+                    # Çünkü REST API'lerde kaynaklar (resources) isimlendirilirken çoğul isimler kullanılır.
+                    # Örneğin, bir kaynak için /employee değil /employees şeklinde erişim sağlanır.
+                    # Alttaki @RepositoryRestResource annotation'ınını kullanarak, /employees yerine
+                      istediğiniz ismi belirleyebiliriz.
+           @RepositoryRestResource(path = "<ornek>")
+           public interface EmployeeRepository extends JpaRepository<<Employee>, Long> {
+                                   }
+            localhost:8080/magic-api/ornek şeklinde erişim sağlanır.

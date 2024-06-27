@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS for additional styling -->
+    <style>
+        body {
+            background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+        }
+        .container {
+            margin-top: 50px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            padding: 20px;
+        }
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Lobster', cursive;
+            font-size: 2.5em;
+            color: #ff6363;
+        }
+        .table {
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table thead {
+            background: #ff6363;
+            color: #fff;
+        }
+        .table tbody tr:nth-child(even) {
+            background: #ffe6e6;
+        }
+        .table tbody tr:hover {
+            background: #ffb3b3;
+        }
+        th, td {
+            text-align: center;
+        }
+        .btn-add {
+            display: inline-block;
+            width: 150px;
+            background-color: #fcb69f;
+            color: #ffffff;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 0;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin: 5px 0;
+        }
+        .btn-update {
+            display: inline-block;
+            width: 100px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 0.9em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 0;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin: 5px 2px;
+        }
+        .btn-delete {
+            display: inline-block;
+            width: 100px;
+            background-color: #ff6363;
+            color: #fff;
+            font-size: 0.9em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 0;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin: 5px 2px;
+        }
+        .logout-button {
+            display: inline-block;
+            width: 100px;
+            background-color: #dc3545;
+            color: #fff;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 5px 0;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        .btn-add:hover, .btn-update:hover, .btn-delete:hover {
+            background-color: #e55353;
+        }
+        .btn-update:hover {
+            background-color: #0056b3;
+        }
+        .btn-add:hover {
+            background-color: #53e55a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h3>Employee Directory</h3>
+    <hr>
+    <div sec:authorize="hasRole('MANAGER')">
+    <a href="/employees/showFormForAdd" class="btn-add">Add Employee</a>
+    </div>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="tempEmployee : ${employees}">
+            <td th:text="${tempEmployee.firstName}"></td>
+            <td th:text="${tempEmployee.lastName}"></td>
+            <td th:text="${tempEmployee.email}"></td>
+            <td>
+
+                <a sec:authorize="hasRole('MANAGER')" th:href="@{/employees/showFormForUpdate/{employeeId}(employeeId=${tempEmployee.id})}"  class="btn-update">Update</a>
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/employees/delete/{employeeId}(employeeId=${tempEmployee.id})}" class="btn-delete" onclick="return confirm('Are you sure you want to delete this employee?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" class="logout-button" value="Çıkış Yap">
+    </form>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBogGzAtyqz7ZL2VW1c56bRlALmrjSmHgAjYt+Sc5M5p2C2+" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-pH7JUs1ntZ+dHfwbIv0nNpP41qcJAJ6A6lBIF+6Bu8zYz3WUNM8Jrtp+nbuBYa+H" crossorigin="anonymous"></script>
+</body>
+</html>
